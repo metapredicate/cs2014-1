@@ -42,6 +42,7 @@
 #include "mbedtls/aes.h"
 #include "mbedtls/md.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,6 +59,29 @@
 
 #define MODE_ENCRYPT    0
 #define MODE_DECRYPT    1
+
+int parse_mode(char *mode){
+    const char *encrypt = "encryption";
+    const char *decrypt = "decryption";
+    char normalized[16];
+    
+    int i;
+    for (i = 0; i < (int)strlen(mode) && i < 15; i++){
+        normalized[i] = tolower(mode[i]);
+    }
+    normalized[i] = '\0';
+
+    if (strncmp(normalized, encrypt, strlen(normalized)) == 0) {
+        return MODE_ENCRYPT;
+    }
+
+    if (strncmp(normalized, decrypt, strlen(normalized)) == 0) {
+        return MODE_DECRYPT;
+    }
+
+    return -1;
+}
+
 
 #define USAGE   \
     "\n  asssignment2 <mode> <input filename> <output filename> <key>\n" \
@@ -130,13 +154,13 @@ int main( int argc, char *argv[] )
         goto exit;
     }
 
-    mode = atoi( argv[1] );
+    mode = parse_mode( argv[1] );
     memset( IV,     0, sizeof( IV ) );
     memset( key,    0, sizeof( key ) );
     memset( digest, 0, sizeof( digest ) );
     memset( buffer, 0, sizeof( buffer ) );
 
-    if( mode != MODE_ENCRYPT && mode != MODE_DECRYPT )
+    if( mode == -1)
     {
         mbedtls_fprintf( stderr, "invalide operation mode\n" );
         goto exit;
