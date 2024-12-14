@@ -39,10 +39,17 @@ program_C_SRCS := $(wildcard *.c)
 # the names of our object files - in this case all .o files here, derived from .c files
 program_C_OBJS := ${program_C_SRCS:.c=.o}
 program_OBJS := $(program_C_OBJS) 
+
+
+
+# centralized mbedTLS path
+MBEDTLS_DIR = ../../mbedtls
+
 # "special" includes, in this case mbed TLS
-program_INCLUDE_DIRS := ./mbedtls-2.6.0/include
+program_INCLUDE_DIRS := $(MBEDTLS_DIR)/include
 # "special" library dirs, in this case mbed TLS
-program_LIBRARY_DIRS := ./mbedtls-2.6.0/library
+program_LIBRARY_DIRS := $(MBEDTLS_DIR)/build/library
+
 # "special" libraries , in this case mbed TLS
 # careful here - the order matters!
 program_LIBRARIES := mbedcrypto mbedtls   
